@@ -1,0 +1,36 @@
+[
+  {
+    "hostname": "rog-ally",
+    "os": "Ubuntu 24.04",
+    "cpu": "AMD Ryzen Z2A",
+    "ram": "16 GB",
+    "gbCpuUrl": null,
+    "gbGpuUrl": null,
+    "gbSingle": 2450,
+    "gbMulti": 10200,
+    "gbGpu": 32000,
+    "gbAiCpuUrl": null,
+    "gbAiGpuUrl": null,
+    "gbAiCpu": 2100,
+    "gbAiGpu": 15000,
+    "fioRead": 3500.50,
+    "fioWrite": 2900.25
+  },
+  {
+    "hostname": "mac-mini",
+    "os": "macOS 14.2",
+    "cpu": "Apple M2 Pro",
+    "ram": "32 GB",
+    "gbCpuUrl": "https://browser.geekbench.com/v7/cpu/example",
+    "gbGpuUrl": "https://browser.geekbench.com/v7/compute/example",
+    "gbSingle": null,
+    "gbMulti": null,
+    "gbGpu": null,
+    "gbAiCpuUrl": "https://browser.geekbench.com/ai/example-cpu",
+    "gbAiGpuUrl": "https://browser.geekbench.com/ai/example-gpu",
+    "gbAiCpu": null,
+    "gbAiGpu": null,
+    "fioRead": 6100.00,
+    "fioWrite": 5800.00
+  }
+]
