@@ -135,14 +135,14 @@ if [ -n "$GBAI_CMD" ]; then
     [ -n "$TEMP_AI_CPU_URL" ] && GBAI_CPU_URL="\"$TEMP_AI_CPU_URL\""
     
     echo "Running Geekbench AI GPU Test..."
-    debug_log "Running command -> (cd \"$(dirname "$GBAI_CMD")\" && \"./$(basename "$GBAI_CMD")\" --gpu)"
+    debug_log "Running command -> (cd \"$(dirname "$GBAI_CMD")\" && \"./$(basename "$GBAI_CMD")\" --ai-backend GPU)"
     
     (cd "$(dirname "$GBAI_CMD")" && "./$(basename "$GBAI_CMD")" --gpu > /tmp/gbai_gpu_temp.txt 2>&1)
     TEMP_AI_GPU_URL=$(grep "https://browser.geekbench.com" /tmp/gbai_gpu_temp.txt | grep -v "claim" | xargs)
     [ -n "$TEMP_AI_GPU_URL" ] && GBAI_GPU_URL="\"$TEMP_AI_GPU_URL\""
 
     echo "Running Geekbench AI NPU Test..."
-    debug_log "Running command -> (cd \"$(dirname "$GBAI_CMD")\" && \"./$(basename "$GBAI_CMD")\" --npu)"
+    debug_log "Running command -> (cd \"$(dirname "$GBAI_CMD")\" && \"./$(basename "$GBAI_CMD")\" --ai-backend NPU)"
     
     (cd "$(dirname "$GBAI_CMD")" && "./$(basename "$GBAI_CMD")" --npu > /tmp/gbai_npu_temp.txt 2>&1)
     TEMP_AI_NPU_URL=$(grep "https://browser.geekbench.com" /tmp/gbai_npu_temp.txt | grep -v "claim" | xargs)

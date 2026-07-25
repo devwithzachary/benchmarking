@@ -46,5 +46,30 @@
   "gbAiNpuSingle": 6158,
   "gbAiNpuHalf": 42191,
   "gbAiNpuQuant": 58862
-  }
+  },
+  {
+  "hostname": "Starlabs StarFighter",
+  "os": "Ubuntu 26.04 LTS",
+  "cpu": "Intel(R) Core(TM) Ultra 5 125H",
+  "gpu": "Intel Corporation Meteor Lake-P [Intel Arc Graphics] (rev 08)",
+  "ram": "32 GB",
+  "gbCpuUrl": "https://browser.geekbench.com/v7/cpu/28723",
+  "gbGpuUrl": "https://browser.geekbench.com/v7/gpu/16225",
+  "gbSingle": 2051,
+  "gbMulti": 12190,
+  "gbGpu": 22119,
+  "gbAiCpuUrl": "https://browser.geekbench.com/ai/v1/537887",
+  "gbAiGpuUrl": null,
+  "gbAiNpuUrl": null,
+  "gbAiCpuSingle": 1622,
+  "gbAiCpuHalf": 1691,
+  "gbAiCpuQuant": 1088,
+  "gbAiGpuSingle": null,
+  "gbAiGpuHalf": null,
+  "gbAiGpuQuant": null,
+  "gbAiNpuSingle": null,
+  "gbAiNpuHalf": null,
+  "gbAiNpuQuant": null
+}
+
 ]
