@@ -18,7 +18,7 @@
             margin-bottom: 2rem;
         }
         .table-container {
-            max-width: 1300px;
+            max-width: 1400px;
             margin: 0 auto;
             overflow-x: auto;
             background: #ffffff;
@@ -89,8 +89,15 @@
                     <th onclick="sortTable('gbSingle')">GB7 Single <span class="sort-icon"></span></th>
                     <th onclick="sortTable('gbMulti')">GB7 Multi <span class="sort-icon"></span></th>
                     <th onclick="sortTable('gbGpu')">GB7 GPU <span class="sort-icon"></span></th>
-                    <th onclick="sortTable('gbAiCpu')">GB AI CPU <span class="sort-icon"></span></th>
-                    <th onclick="sortTable('gbAiGpu')">GB AI GPU <span class="sort-icon"></span></th>
+                    <th onclick="sortTable('gbAiCpuSingle')">AI CPU (Single) <span class="sort-icon"></span></th>
+                    <th onclick="sortTable('gbAiCpuHalf')">AI CPU (Half) <span class="sort-icon"></span></th>
+                    <th onclick="sortTable('gbAiCpuQuant')">AI CPU (Quant) <span class="sort-icon"></span></th>
+                    <th onclick="sortTable('gbAiGpuSingle')">AI GPU (Single) <span class="sort-icon"></span></th>
+                    <th onclick="sortTable('gbAiGpuHalf')">AI GPU (Half) <span class="sort-icon"></span></th>
+                    <th onclick="sortTable('gbAiGpuQuant')">AI GPU (Quant) <span class="sort-icon"></span></th>
+                    <th onclick="sortTable('gbAiNpuSingle')">AI NPU (Single) <span class="sort-icon"></span></th>
+                    <th onclick="sortTable('gbAiNpuHalf')">AI NPU (Half) <span class="sort-icon"></span></th>
+                    <th onclick="sortTable('gbAiNpuQuant')">AI NPU (Quant) <span class="sort-icon"></span></th>
                     <th onclick="sortTable('fioRead')">Read (MB/s) <span class="sort-icon"></span></th>
                     <th onclick="sortTable('fioWrite')">Write (MB/s) <span class="sort-icon"></span></th>
                 </tr>
@@ -145,8 +152,15 @@
                     <td>${renderScore(row.gbSingle, row.gbCpuUrl)}</td>
                     <td>${renderScore(row.gbMulti, row.gbCpuUrl)}</td>
                     <td>${renderScore(row.gbGpu, row.gbGpuUrl)}</td>
-                    <td>${renderScore(row.gbAiCpu, row.gbAiCpuUrl)}</td>
-                    <td>${renderScore(row.gbAiGpu, row.gbAiGpuUrl)}</td>
+                    <td>${renderScore(row.gbAiCpuSingle, row.gbAiCpuUrl)}</td>
+                    <td>${renderScore(row.gbAiCpuHalf, row.gbAiCpuUrl)}</td>
+                    <td>${renderScore(row.gbAiCpuQuant, row.gbAiCpuUrl)}</td>
+                    <td>${renderScore(row.gbAiGpuSingle, row.gbAiGpuUrl)}</td>
+                    <td>${renderScore(row.gbAiGpuHalf, row.gbAiGpuUrl)}</td>
+                    <td>${renderScore(row.gbAiGpuQuant, row.gbAiGpuUrl)}</td>
+                    <td>${renderScore(row.gbAiNpuSingle, row.gbAiNpuUrl)}</td>
+                    <td>${renderScore(row.gbAiNpuHalf, row.gbAiNpuUrl)}</td>
+                    <td>${renderScore(row.gbAiNpuQuant, row.gbAiNpuUrl)}</td>
                     <td>${row.fioRead ? row.fioRead.toFixed(2) : 'N/A'}</td>
                     <td>${row.fioWrite ? row.fioWrite.toFixed(2) : 'N/A'}</td>
                 `;

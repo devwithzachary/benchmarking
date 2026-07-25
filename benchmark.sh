@@ -81,14 +81,14 @@ resolve_tool() {
 
 resolve_geekbench() {
     if [ "$OS_TYPE" = "Darwin" ]; then
-        if [ -x "/Applications/Geekbench 7.app/Contents/MacOS/Geekbench 7" ]; then echo "/Applications/Geekbench 7.app/Contents/MacOS/Geekbench 7"
-        elif [ -x "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/Geekbench 7" ]; then echo "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/Geekbench 7"
+        if [ -x "/Applications/Geekbench 7.app/Contents/MacOS/geekbench7" ]; then echo "/Applications/Geekbench 7.app/Contents/MacOS/geekbench7"
+        elif [ -x "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/geekbench7" ]; then echo "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/geekbench7"
         elif command -v geekbench7 >/dev/null 2>&1; then echo "geekbench7"
         else
             curl -sL -o "$DIR/Geekbench-7-macOS.zip" "https://cdn.geekbench.com/Geekbench-7.0.0-macOS.zip" >/dev/null 2>&1
             unzip -q "$DIR/Geekbench-7-macOS.zip" -d "$DIR/Geekbench-7-macOS" >/dev/null 2>&1
             rm -f "$DIR/Geekbench-7-macOS.zip"
-            [ -x "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/Geekbench 7" ] && echo "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/Geekbench 7" || echo ""
+            [ -x "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/geekbench7" ] && echo "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/geekbench7" || echo ""
         fi
     else
         if [ -x "$DIR/geekbench7" ]; then echo "$DIR/geekbench7"
@@ -103,14 +103,14 @@ resolve_geekbench() {
 
 resolve_geekbench_ai() {
     if [ "$OS_TYPE" = "Darwin" ]; then
-        if [ -x "/Applications/Geekbench AI.app/Contents/MacOS/Geekbench AI" ]; then echo "/Applications/Geekbench AI.app/Contents/MacOS/Geekbench AI"
-        elif [ -x "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/Geekbench AI" ]; then echo "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/Geekbench AI"
+        if [ -x "/Applications/Geekbench AI.app/Contents/MacOS/geekbenchAI" ]; then echo "/Applications/Geekbench AI.app/Contents/MacOS/geekbenchAI"
+        elif [ -x "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/geekbenchAI" ]; then echo "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/geekbenchAI"
         elif command -v geekbenchAI >/dev/null 2>&1; then echo "geekbenchAI"
         else
             curl -sL -o "$DIR/GeekbenchAI-macOS.zip" "https://cdn.geekbench.com/GeekbenchAI-1.7.0-macOS.zip" >/dev/null 2>&1
             unzip -q "$DIR/GeekbenchAI-macOS.zip" -d "$DIR/GeekbenchAI-macOS" >/dev/null 2>&1
             rm -f "$DIR/GeekbenchAI-macOS.zip"
-            [ -x "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/Geekbench AI" ] && echo "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/Geekbench AI" || echo ""
+            [ -x "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/geekbenchAI" ] && echo "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/geekbenchAI" || echo ""
         fi
     else
         if [ -x "$DIR/geekbenchAI" ]; then echo "$DIR/geekbenchAI"
@@ -139,6 +139,7 @@ GB_CPU_URL="null"
 GB_GPU_URL="null"
 GBAI_CPU_URL="null"
 GBAI_GPU_URL="null"
+GBAI_NPU_URL="null"
 
 echo "Running FIO Storage Test..."
 if [ -n "$FIO_CMD" ]; then
@@ -163,18 +164,14 @@ if [ -n "$GB_CMD" ]; then
     "$GB_CMD" > /tmp/gb_temp.txt 2>&1
     
     TEMP_CPU_URL=$(grep "https://browser.geekbench.com" /tmp/gb_temp.txt | grep -v "claim" | xargs)
-    if [ -n "$TEMP_CPU_URL" ]; then
-        GB_CPU_URL="\"$TEMP_CPU_URL\""
-    fi
+    [ -n "$TEMP_CPU_URL" ] && GB_CPU_URL="\"$TEMP_CPU_URL\""
     
     echo "Running Geekbench 7 GPU Test..."
     debug_log "Running command -> \"$GB_CMD\" --gpu"
     "$GB_CMD" --gpu > /tmp/gb_gpu_temp.txt 2>&1
     
     TEMP_GPU_URL=$(grep "https://browser.geekbench.com" /tmp/gb_gpu_temp.txt | grep -v "claim" | xargs)
-    if [ -n "$TEMP_GPU_URL" ]; then
-        GB_GPU_URL="\"$TEMP_GPU_URL\""
-    fi
+    [ -n "$TEMP_GPU_URL" ] && GB_GPU_URL="\"$TEMP_GPU_URL\""
     
     if [ "$DEBUG_MODE" -eq 0 ]; then
         rm -f /tmp/gb_temp.txt /tmp/gb_gpu_temp.txt
@@ -185,23 +182,23 @@ echo "Running Geekbench AI CPU Test..."
 if [ -n "$GBAI_CMD" ]; then
     debug_log "Running command -> \"$GBAI_CMD\""
     "$GBAI_CMD" > /tmp/gbai_temp.txt 2>&1
-    
     TEMP_AI_CPU_URL=$(grep "https://browser.geekbench.com" /tmp/gbai_temp.txt | grep -v "claim" | xargs)
-    if [ -n "$TEMP_AI_CPU_URL" ]; then
-        GBAI_CPU_URL="\"$TEMP_AI_CPU_URL\""
-    fi
+    [ -n "$TEMP_AI_CPU_URL" ] && GBAI_CPU_URL="\"$TEMP_AI_CPU_URL\""
     
     echo "Running Geekbench AI GPU Test..."
     debug_log "Running command -> \"$GBAI_CMD\" --gpu"
     "$GBAI_CMD" --gpu > /tmp/gbai_gpu_temp.txt 2>&1
-    
     TEMP_AI_GPU_URL=$(grep "https://browser.geekbench.com" /tmp/gbai_gpu_temp.txt | grep -v "claim" | xargs)
-    if [ -n "$TEMP_AI_GPU_URL" ]; then
-        GBAI_GPU_URL="\"$TEMP_AI_GPU_URL\""
-    fi
+    [ -n "$TEMP_AI_GPU_URL" ] && GBAI_GPU_URL="\"$TEMP_AI_GPU_URL\""
+
+    echo "Running Geekbench AI NPU Test..."
+    debug_log "Running command -> \"$GBAI_CMD\" --npu"
+    "$GBAI_CMD" --npu > /tmp/gbai_npu_temp.txt 2>&1
+    TEMP_AI_NPU_URL=$(grep "https://browser.geekbench.com" /tmp/gbai_npu_temp.txt | grep -v "claim" | xargs)
+    [ -n "$TEMP_AI_NPU_URL" ] && GBAI_NPU_URL="\"$TEMP_AI_NPU_URL\""
     
     if [ "$DEBUG_MODE" -eq 0 ]; then
-        rm -f /tmp/gbai_temp.txt /tmp/gbai_gpu_temp.txt
+        rm -f /tmp/gbai_temp.txt /tmp/gbai_gpu_temp.txt /tmp/gbai_npu_temp.txt
     fi
 fi
 
@@ -220,8 +217,16 @@ cat <<EOF > "$OUTPUT_FILE"
   "gbGpu": null,
   "gbAiCpuUrl": $GBAI_CPU_URL,
   "gbAiGpuUrl": $GBAI_GPU_URL,
-  "gbAiCpu": null,
-  "gbAiGpu": null,
+  "gbAiNpuUrl": $GBAI_NPU_URL,
+  "gbAiCpuSingle": null,
+  "gbAiCpuHalf": null,
+  "gbAiCpuQuant": null,
+  "gbAiGpuSingle": null,
+  "gbAiGpuHalf": null,
+  "gbAiGpuQuant": null,
+  "gbAiNpuSingle": null,
+  "gbAiNpuHalf": null,
+  "gbAiNpuQuant": null,
   "fioRead": $FIO_READ,
   "fioWrite": $FIO_WRITE
 }
