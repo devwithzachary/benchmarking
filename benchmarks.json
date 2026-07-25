@@ -21,8 +21,30 @@
   "gbAiGpuQuant": 7633,
   "gbAiNpuSingle": 4979,
   "gbAiNpuHalf": 35738,
-  "gbAiNpuQuant": 51025,
-  "fioRead": 57.88,
-  "fioWrite": 57.78
+  "gbAiNpuQuant": 51025
+  },
+  {
+  "hostname": "Mac Studio",
+  "os": "macOS 26.5.2",
+  "cpu": "Apple M4 Max",
+  "gpu": "Apple M4 Max",
+  "ram": "36 GB",
+  "gbCpuUrl": "https://browser.geekbench.com/v7/cpu/28199",
+  "gbGpuUrl": "https://browser.geekbench.com/v7/gpu/15973",
+  "gbSingle": 3347,
+  "gbMulti": 23254,
+  "gbGpu": 101729,
+  "gbAiCpuUrl": "https://browser.geekbench.com/ai/v1/537838",
+  "gbAiGpuUrl": "https://browser.geekbench.com/ai/v1/537840",
+  "gbAiNpuUrl": "https://browser.geekbench.com/ai/v1/537842",
+  "gbAiCpuSingle": 6161,
+  "gbAiCpuHalf": 10251,
+  "gbAiCpuQuant": 7821,
+  "gbAiGpuSingle": 23226,
+  "gbAiGpuHalf": 26364,
+  "gbAiGpuQuant": 24197,
+  "gbAiNpuSingle": 6158,
+  "gbAiNpuHalf": 42191,
+  "gbAiNpuQuant": 58862
   }
 ]

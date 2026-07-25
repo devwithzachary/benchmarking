@@ -34,6 +34,7 @@ if [ "$OS_TYPE" = "Darwin" ]; then
     MEM_INFO="$(( $(sysctl -n hw.memsize) / 1073741824 )) GB"
     THREADS=$(sysctl -n hw.logicalcpu)
     IO_ENGINE="posixaio"
+    FIO_OPTS="--fallocate=none"
 else
     OS_INFO=$(grep PRETTY_NAME /etc/os-release 2>/dev/null | cut -d'"' -f2 || echo "Unknown Linux")
     CPU_INFO=$(grep -m1 'model name' /proc/cpuinfo | awk -F: '{print $2}' | xargs)
@@ -41,6 +42,7 @@ else
     MEM_INFO=$(free -h | awk '/^Mem:/ {print $2}')
     THREADS=$(nproc)
     IO_ENGINE="libaio"
+    FIO_OPTS="--direct=1"
 fi
 
 HOSTNAME_VAL=$(hostname)
@@ -86,44 +88,23 @@ resolve_geekbench_ai() {
     if [ "$OS_TYPE" = "Darwin" ]; then
         echo "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/Geekbench AI"
     else
-        echo "$DIR/Geekbench-1.7.0-Linux/geekbench7"
+        echo "$DIR/GeekbenchAI-1.7.0-Linux/geekbenchAI"
     fi
 }
 
 debug_log "Resolving tool paths..."
-FIO_CMD=$(resolve_tool fio)
 GB_CMD=$(resolve_geekbench)
 GBAI_CMD=$(resolve_geekbench_ai)
 
-debug_log "Resolved FIO path -> '$FIO_CMD'"
 debug_log "Resolved Geekbench 7 path -> '$GB_CMD'"
 debug_log "Resolved Geekbench AI path -> '$GBAI_CMD'"
 
 # Default values
-FIO_READ="null"
-FIO_WRITE="null"
 GB_CPU_URL="null"
 GB_GPU_URL="null"
 GBAI_CPU_URL="null"
 GBAI_GPU_URL="null"
 GBAI_NPU_URL="null"
-
-echo "Running FIO Storage Test..."
-if [ -n "$FIO_CMD" ]; then
-    debug_log "Running command -> $FIO_CMD --name=randrw_test --filename=$DIR/fio_test_file --size=1G --direct=1 --rw=randrw --bs=4k --ioengine=$IO_ENGINE --iodepth=64 --runtime=30 --time_based --group_reporting"
-    
-    $FIO_CMD --name=randrw_test --filename=$DIR/fio_test_file --size=1G --direct=1 --rw=randrw --bs=4k --ioengine=$IO_ENGINE --iodepth=64 --runtime=30 --time_based --group_reporting > /tmp/fio_temp.txt 2>&1
-    
-    debug_log "Raw FIO output saved to /tmp/fio_temp.txt"
-    AWK_MBPS='function get_mbps(str) { val=str+0; if(str~/MiB/||str~/mib/)return val*1.048576; if(str~/KiB/||str~/kib/)return (val*1.024)/1000; if(str~/GiB/||str~/gib/)return val*1073.74; if(str~/[kK]B/)return val/1000; if(str~/GB/)return val*1000; return val; }'
-    
-    FIO_READ=$($FIO_CMD --version >/dev/null 2>&1 && awk "$AWK_MBPS tolower(\$0) ~ /read *:/ { match(\$0, /[bB][wW]=[^, )]+/); bw=substr(\$0, RSTART+3, RLENGTH-3); printf \"%.2f\", get_mbps(bw); exit }" /tmp/fio_temp.txt || echo "null")
-    FIO_WRITE=$($FIO_CMD --version >/dev/null 2>&1 && awk "$AWK_MBPS tolower(\$0) ~ /write *:/ { match(\$0, /[bB][wW]=[^, )]+/); bw=substr(\$0, RSTART+3, RLENGTH-3); printf \"%.2f\", get_mbps(bw); exit }" /tmp/fio_temp.txt || echo "null")
-    
-    if [ "$DEBUG_MODE" -eq 0 ]; then
-        rm -f $DIR/fio_test_file /tmp/fio_temp.txt
-    fi
-fi
 
 echo "Running Geekbench 7 CPU Test..."
 if [ -n "$GB_CMD" ]; then
@@ -194,9 +175,7 @@ cat <<EOF > "$OUTPUT_FILE"
   "gbAiGpuQuant": null,
   "gbAiNpuSingle": null,
   "gbAiNpuHalf": null,
-  "gbAiNpuQuant": null,
-  "fioRead": $FIO_READ,
-  "fioWrite": $FIO_WRITE
+  "gbAiNpuQuant": null
 }
 EOF
 

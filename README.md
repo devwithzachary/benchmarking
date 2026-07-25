@@ -10,7 +10,6 @@ Welcome to my collection of system benchmarking scripts. This repository contain
 An automated system benchmarking script for Linux and macOS. It handles installing the required dependencies via standard package managers and runs a full suite of tests.
 * **Geekbench 7** (CPU and GPU Compute)
 * **Geekbench AI** (CPU and GPU Compute)
-* **FIO** (Storage Random Read/Write)
 
 The script automatically formats the final output into a clean JSON file ready to be added to the web dashboard.
 

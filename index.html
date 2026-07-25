@@ -87,8 +87,6 @@
                     <th onclick="sortTable('cpu')">CPU <span class="sort-icon"></span></th>
                     <th onclick="sortTable('gpu')">GPU <span class="sort-icon"></span></th>
                     <th onclick="sortTable('ram')">RAM <span class="sort-icon"></span></th>
-                    <th onclick="sortTable('fioRead')">Read (MB/s) <span class="sort-icon"></span></th>
-                    <th onclick="sortTable('fioWrite')">Write (MB/s) <span class="sort-icon"></span></th>
                     <th onclick="sortTable('gbSingle')">GB7 Single <span class="sort-icon"></span></th>
                     <th onclick="sortTable('gbMulti')">GB7 Multi <span class="sort-icon"></span></th>
                     <th onclick="sortTable('gbGpu')">GB7 GPU <span class="sort-icon"></span></th>
@@ -151,8 +149,6 @@
                     <td>${row.cpu || 'Unknown'}</td>
                     <td>${row.gpu || 'Unknown'}</td>
                     <td>${row.ram || 'Unknown'}</td>
-                    <td>${row.fioRead ? row.fioRead.toFixed(2) : 'N/A'}</td>
-                    <td>${row.fioWrite ? row.fioWrite.toFixed(2) : 'N/A'}</td>
                     <td>${renderScore(row.gbSingle, row.gbCpuUrl)}</td>
                     <td>${renderScore(row.gbMulti, row.gbCpuUrl)}</td>
                     <td>${renderScore(row.gbGpu, row.gbGpuUrl)}</td>
