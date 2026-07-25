@@ -88,7 +88,7 @@ resolve_geekbench_ai() {
     if [ "$OS_TYPE" = "Darwin" ]; then
         echo "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/Geekbench AI"
     else
-        echo "$DIR/GeekbenchAI-1.7.0-Linux/geekbenchAI"
+        echo "$DIR/GeekbenchAI-1.7.0-Linux/banff"
     fi
 }
 
@@ -128,20 +128,23 @@ fi
 
 echo "Running Geekbench AI CPU Test..."
 if [ -n "$GBAI_CMD" ]; then
-    debug_log "Running command -> \"$GBAI_CMD\""
-    "$GBAI_CMD" > /tmp/gbai_temp.txt 2>&1
+    debug_log "Running command -> (cd \"$(dirname "$GBAI_CMD")\" && \"./$(basename "$GBAI_CMD")\")"
+    
+    (cd "$(dirname "$GBAI_CMD")" && "./$(basename "$GBAI_CMD")" > /tmp/gbai_temp.txt 2>&1)
     TEMP_AI_CPU_URL=$(grep "https://browser.geekbench.com" /tmp/gbai_temp.txt | grep -v "claim" | xargs)
     [ -n "$TEMP_AI_CPU_URL" ] && GBAI_CPU_URL="\"$TEMP_AI_CPU_URL\""
     
     echo "Running Geekbench AI GPU Test..."
-    debug_log "Running command -> \"$GBAI_CMD\" --gpu"
-    "$GBAI_CMD" --gpu > /tmp/gbai_gpu_temp.txt 2>&1
+    debug_log "Running command -> (cd \"$(dirname "$GBAI_CMD")\" && \"./$(basename "$GBAI_CMD")\" --gpu)"
+    
+    (cd "$(dirname "$GBAI_CMD")" && "./$(basename "$GBAI_CMD")" --gpu > /tmp/gbai_gpu_temp.txt 2>&1)
     TEMP_AI_GPU_URL=$(grep "https://browser.geekbench.com" /tmp/gbai_gpu_temp.txt | grep -v "claim" | xargs)
     [ -n "$TEMP_AI_GPU_URL" ] && GBAI_GPU_URL="\"$TEMP_AI_GPU_URL\""
 
     echo "Running Geekbench AI NPU Test..."
-    debug_log "Running command -> \"$GBAI_CMD\" --npu"
-    "$GBAI_CMD" --npu > /tmp/gbai_npu_temp.txt 2>&1
+    debug_log "Running command -> (cd \"$(dirname "$GBAI_CMD")\" && \"./$(basename "$GBAI_CMD")\" --npu)"
+    
+    (cd "$(dirname "$GBAI_CMD")" && "./$(basename "$GBAI_CMD")" --npu > /tmp/gbai_npu_temp.txt 2>&1)
     TEMP_AI_NPU_URL=$(grep "https://browser.geekbench.com" /tmp/gbai_npu_temp.txt | grep -v "claim" | xargs)
     [ -n "$TEMP_AI_NPU_URL" ] && GBAI_NPU_URL="\"$TEMP_AI_NPU_URL\""
     
