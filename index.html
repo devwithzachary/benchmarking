@@ -85,6 +85,7 @@
                     <th onclick="sortTable('hostname')">Hostname <span class="sort-icon"></span></th>
                     <th onclick="sortTable('os')">OS <span class="sort-icon"></span></th>
                     <th onclick="sortTable('cpu')">CPU <span class="sort-icon"></span></th>
+                    <th onclick="sortTable('gpu')">GPU <span class="sort-icon"></span></th>
                     <th onclick="sortTable('ram')">RAM <span class="sort-icon"></span></th>
                     <th onclick="sortTable('gbSingle')">GB7 Single <span class="sort-icon"></span></th>
                     <th onclick="sortTable('gbMulti')">GB7 Multi <span class="sort-icon"></span></th>
@@ -148,6 +149,7 @@
                     <td>${row.hostname || 'Unknown'}</td>
                     <td>${row.os || 'Unknown'}</td>
                     <td>${row.cpu || 'Unknown'}</td>
+                    <td>${row.gpu || 'Unknown'}</td>
                     <td>${row.ram || 'Unknown'}</td>
                     <td>${renderScore(row.gbSingle, row.gbCpuUrl)}</td>
                     <td>${renderScore(row.gbMulti, row.gbCpuUrl)}</td>

@@ -3,6 +3,7 @@
   "hostname": "MacBook Neo",
   "os": "macOS 27.0",
   "cpu": "Apple A18 Pro",
+  "gpu": "Apple A18 Pro",
   "ram": "8 GB",
   "gbCpuUrl": "https://browser.geekbench.com/v7/cpu/26609",
   "gbGpuUrl": "https://browser.geekbench.com/v7/gpu/15336",

@@ -3,16 +3,11 @@
 OUTPUT_FILE="benchmark_$(hostname)_$(date +%Y%m%d).json"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 
-RUN_STRESS=0
 DEBUG_MODE=0
 
 # Parse arguments
 for arg in "$@"; do
     case $arg in
-        --stress)
-        RUN_STRESS=1
-        shift
-        ;;
         --debug)
         DEBUG_MODE=1
         shift
@@ -81,45 +76,17 @@ resolve_tool() {
 
 resolve_geekbench() {
     if [ "$OS_TYPE" = "Darwin" ]; then
-        if [ -x "/Applications/Geekbench 7.app/Contents/MacOS/geekbench7" ]; then echo "/Applications/Geekbench 7.app/Contents/MacOS/geekbench7"
-        elif [ -x "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/geekbench7" ]; then echo "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/geekbench7"
-        elif command -v geekbench7 >/dev/null 2>&1; then echo "geekbench7"
-        else
-            curl -sL -o "$DIR/Geekbench-7-macOS.zip" "https://cdn.geekbench.com/Geekbench-7.0.0-macOS.zip" >/dev/null 2>&1
-            unzip -q "$DIR/Geekbench-7-macOS.zip" -d "$DIR/Geekbench-7-macOS" >/dev/null 2>&1
-            rm -f "$DIR/Geekbench-7-macOS.zip"
-            [ -x "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/geekbench7" ] && echo "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/geekbench7" || echo ""
-        fi
+        echo "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/Geekbench 7"
     else
-        if [ -x "$DIR/geekbench7" ]; then echo "$DIR/geekbench7"
-        elif ls "$DIR"/Geekbench-7*-Linux/geekbench7 1> /dev/null 2>&1; then ls "$DIR"/Geekbench-7*-Linux/geekbench7 | head -n 1
-        elif command -v geekbench7 >/dev/null 2>&1; then echo "geekbench7"
-        else
-            wget -qO- https://cdn.geekbench.com/Geekbench-7.0.0-Linux.tar.gz | tar xvz -C "$DIR" >/dev/null 2>&1
-            ls "$DIR"/Geekbench-7*-Linux/geekbench7 1> /dev/null 2>&1 && ls "$DIR"/Geekbench-7*-Linux/geekbench7 | head -n 1 || echo ""
-        fi
-    fi
+        echo "$DIR/Geekbench-7.0.0-Linux/geekbench7"
+    fi 
 }
 
 resolve_geekbench_ai() {
     if [ "$OS_TYPE" = "Darwin" ]; then
-        if [ -x "/Applications/Geekbench AI.app/Contents/MacOS/geekbenchAI" ]; then echo "/Applications/Geekbench AI.app/Contents/MacOS/geekbenchAI"
-        elif [ -x "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/geekbenchAI" ]; then echo "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/geekbenchAI"
-        elif command -v geekbenchAI >/dev/null 2>&1; then echo "geekbenchAI"
-        else
-            curl -sL -o "$DIR/GeekbenchAI-macOS.zip" "https://cdn.geekbench.com/GeekbenchAI-1.7.0-macOS.zip" >/dev/null 2>&1
-            unzip -q "$DIR/GeekbenchAI-macOS.zip" -d "$DIR/GeekbenchAI-macOS" >/dev/null 2>&1
-            rm -f "$DIR/GeekbenchAI-macOS.zip"
-            [ -x "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/geekbenchAI" ] && echo "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/geekbenchAI" || echo ""
-        fi
+        echo "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/Geekbench AI"
     else
-        if [ -x "$DIR/geekbenchAI" ]; then echo "$DIR/geekbenchAI"
-        elif ls "$DIR"/GeekbenchAI-*-Linux/geekbenchAI 1> /dev/null 2>&1; then ls "$DIR"/GeekbenchAI-*-Linux/geekbenchAI | head -n 1
-        elif command -v geekbenchAI >/dev/null 2>&1; then echo "geekbenchAI"
-        else
-            wget -qO- https://cdn.geekbench.com/GeekbenchAI-1.7.0-Linux.tar.gz | tar xvz -C "$DIR" >/dev/null 2>&1
-            ls "$DIR"/GeekbenchAI-*-Linux/geekbenchAI 1> /dev/null 2>&1 && ls "$DIR"/GeekbenchAI-*-Linux/geekbenchAI | head -n 1 || echo ""
-        fi
+        echo "$DIR/Geekbench-1.7.0-Linux/geekbench7"
     fi
 }
 
@@ -209,6 +176,7 @@ cat <<EOF > "$OUTPUT_FILE"
   "hostname": "$HOSTNAME_VAL",
   "os": "$OS_INFO",
   "cpu": "$CPU_INFO",
+  "gpu": "$GPU_INFO",
   "ram": "$MEM_INFO",
   "gbCpuUrl": $GB_CPU_URL,
   "gbGpuUrl": $GB_GPU_URL,
