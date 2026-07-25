@@ -131,7 +131,7 @@
 
         function renderScore(score, url) {
             if (score !== null && score !== undefined) {
-                return score;
+                return`<a class="score-link" href="${url}" target="_blank">${score}</a>` ;
             }
             if (url && url !== "null") {
                 return `<a class="score-link" href="${url}" target="_blank">Get Score</a>`;
