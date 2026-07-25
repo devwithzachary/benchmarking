@@ -3,6 +3,29 @@
 OUTPUT_FILE="benchmark_$(hostname)_$(date +%Y%m%d).json"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" &> /dev/null && pwd)"
 
+RUN_STRESS=0
+DEBUG_MODE=0
+
+# Parse arguments
+for arg in "$@"; do
+    case $arg in
+        --stress)
+        RUN_STRESS=1
+        shift
+        ;;
+        --debug)
+        DEBUG_MODE=1
+        shift
+        ;;
+    esac
+done
+
+debug_log() {
+    if [ "$DEBUG_MODE" -eq 1 ]; then
+        echo "DEBUG: $1"
+    fi
+}
+
 echo "Starting System Benchmark..."
 echo "This will take a few minutes. Results will be saved to $OUTPUT_FILE"
 
@@ -58,14 +81,14 @@ resolve_tool() {
 
 resolve_geekbench() {
     if [ "$OS_TYPE" = "Darwin" ]; then
-        if [ -x "/Applications/Geekbench 7.app/Contents/MacOS/geekbench7" ]; then echo "/Applications/Geekbench 7.app/Contents/MacOS/geekbench7"
-        elif [ -x "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/geekbench7" ]; then echo "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/geekbench7"
+        if [ -x "/Applications/Geekbench 7.app/Contents/MacOS/Geekbench 7" ]; then echo "/Applications/Geekbench 7.app/Contents/MacOS/Geekbench 7"
+        elif [ -x "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/Geekbench 7" ]; then echo "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/Geekbench 7"
         elif command -v geekbench7 >/dev/null 2>&1; then echo "geekbench7"
         else
             curl -sL -o "$DIR/Geekbench-7-macOS.zip" "https://cdn.geekbench.com/Geekbench-7.0.0-macOS.zip" >/dev/null 2>&1
             unzip -q "$DIR/Geekbench-7-macOS.zip" -d "$DIR/Geekbench-7-macOS" >/dev/null 2>&1
             rm -f "$DIR/Geekbench-7-macOS.zip"
-            [ -x "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/geekbench7" ] && echo "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/geekbench7" || echo ""
+            [ -x "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/Geekbench 7" ] && echo "$DIR/Geekbench-7-macOS/Geekbench 7.app/Contents/MacOS/Geekbench 7" || echo ""
         fi
     else
         if [ -x "$DIR/geekbench7" ]; then echo "$DIR/geekbench7"
@@ -80,14 +103,14 @@ resolve_geekbench() {
 
 resolve_geekbench_ai() {
     if [ "$OS_TYPE" = "Darwin" ]; then
-        if [ -x "/Applications/Geekbench AI.app/Contents/MacOS/geekbenchAI" ]; then echo "/Applications/Geekbench AI.app/Contents/MacOS/geekbenchAI"
-        elif [ -x "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/geekbenchAI" ]; then echo "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/geekbenchAI"
+        if [ -x "/Applications/Geekbench AI.app/Contents/MacOS/Geekbench AI" ]; then echo "/Applications/Geekbench AI.app/Contents/MacOS/Geekbench AI"
+        elif [ -x "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/Geekbench AI" ]; then echo "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/Geekbench AI"
         elif command -v geekbenchAI >/dev/null 2>&1; then echo "geekbenchAI"
         else
             curl -sL -o "$DIR/GeekbenchAI-macOS.zip" "https://cdn.geekbench.com/GeekbenchAI-1.7.0-macOS.zip" >/dev/null 2>&1
             unzip -q "$DIR/GeekbenchAI-macOS.zip" -d "$DIR/GeekbenchAI-macOS" >/dev/null 2>&1
             rm -f "$DIR/GeekbenchAI-macOS.zip"
-            [ -x "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/geekbenchAI" ] && echo "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/geekbenchAI" || echo ""
+            [ -x "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/Geekbench AI" ] && echo "$DIR/GeekbenchAI-macOS/Geekbench AI.app/Contents/MacOS/Geekbench AI" || echo ""
         fi
     else
         if [ -x "$DIR/geekbenchAI" ]; then echo "$DIR/geekbenchAI"
@@ -100,9 +123,14 @@ resolve_geekbench_ai() {
     fi
 }
 
+debug_log "Resolving tool paths..."
 FIO_CMD=$(resolve_tool fio)
 GB_CMD=$(resolve_geekbench)
 GBAI_CMD=$(resolve_geekbench_ai)
+
+debug_log "Resolved FIO path -> '$FIO_CMD'"
+debug_log "Resolved Geekbench 7 path -> '$GB_CMD'"
+debug_log "Resolved Geekbench AI path -> '$GBAI_CMD'"
 
 # Default values
 FIO_READ="null"
@@ -114,55 +142,71 @@ GBAI_GPU_URL="null"
 
 echo "Running FIO Storage Test..."
 if [ -n "$FIO_CMD" ]; then
+    debug_log "Running command -> $FIO_CMD --name=randrw_test --filename=$DIR/fio_test_file --size=1G --direct=1 --rw=randrw --bs=4k --ioengine=$IO_ENGINE --iodepth=64 --runtime=30 --time_based --group_reporting"
+    
     $FIO_CMD --name=randrw_test --filename=$DIR/fio_test_file --size=1G --direct=1 --rw=randrw --bs=4k --ioengine=$IO_ENGINE --iodepth=64 --runtime=30 --time_based --group_reporting > /tmp/fio_temp.txt 2>&1
     
+    debug_log "Raw FIO output saved to /tmp/fio_temp.txt"
     AWK_MBPS='function get_mbps(str) { val=str+0; if(str~/MiB/||str~/mib/)return val*1.048576; if(str~/KiB/||str~/kib/)return (val*1.024)/1000; if(str~/GiB/||str~/gib/)return val*1073.74; if(str~/[kK]B/)return val/1000; if(str~/GB/)return val*1000; return val; }'
     
     FIO_READ=$($FIO_CMD --version >/dev/null 2>&1 && awk "$AWK_MBPS tolower(\$0) ~ /read *:/ { match(\$0, /[bB][wW]=[^, )]+/); bw=substr(\$0, RSTART+3, RLENGTH-3); printf \"%.2f\", get_mbps(bw); exit }" /tmp/fio_temp.txt || echo "null")
     FIO_WRITE=$($FIO_CMD --version >/dev/null 2>&1 && awk "$AWK_MBPS tolower(\$0) ~ /write *:/ { match(\$0, /[bB][wW]=[^, )]+/); bw=substr(\$0, RSTART+3, RLENGTH-3); printf \"%.2f\", get_mbps(bw); exit }" /tmp/fio_temp.txt || echo "null")
     
-    rm -f $DIR/fio_test_file /tmp/fio_temp.txt
+    if [ "$DEBUG_MODE" -eq 0 ]; then
+        rm -f $DIR/fio_test_file /tmp/fio_temp.txt
+    fi
 fi
 
 echo "Running Geekbench 7 CPU Test..."
 if [ -n "$GB_CMD" ]; then
+    debug_log "Running command -> \"$GB_CMD\""
     "$GB_CMD" > /tmp/gb_temp.txt 2>&1
+    
     TEMP_CPU_URL=$(grep "https://browser.geekbench.com" /tmp/gb_temp.txt | grep -v "claim" | xargs)
     if [ -n "$TEMP_CPU_URL" ]; then
         GB_CPU_URL="\"$TEMP_CPU_URL\""
     fi
     
     echo "Running Geekbench 7 GPU Test..."
+    debug_log "Running command -> \"$GB_CMD\" --gpu"
     "$GB_CMD" --gpu > /tmp/gb_gpu_temp.txt 2>&1
+    
     TEMP_GPU_URL=$(grep "https://browser.geekbench.com" /tmp/gb_gpu_temp.txt | grep -v "claim" | xargs)
     if [ -n "$TEMP_GPU_URL" ]; then
         GB_GPU_URL="\"$TEMP_GPU_URL\""
     fi
     
-    rm -f /tmp/gb_temp.txt /tmp/gb_gpu_temp.txt
+    if [ "$DEBUG_MODE" -eq 0 ]; then
+        rm -f /tmp/gb_temp.txt /tmp/gb_gpu_temp.txt
+    fi
 fi
 
 echo "Running Geekbench AI CPU Test..."
 if [ -n "$GBAI_CMD" ]; then
+    debug_log "Running command -> \"$GBAI_CMD\""
     "$GBAI_CMD" > /tmp/gbai_temp.txt 2>&1
+    
     TEMP_AI_CPU_URL=$(grep "https://browser.geekbench.com" /tmp/gbai_temp.txt | grep -v "claim" | xargs)
     if [ -n "$TEMP_AI_CPU_URL" ]; then
         GBAI_CPU_URL="\"$TEMP_AI_CPU_URL\""
     fi
     
     echo "Running Geekbench AI GPU Test..."
+    debug_log "Running command -> \"$GBAI_CMD\" --gpu"
     "$GBAI_CMD" --gpu > /tmp/gbai_gpu_temp.txt 2>&1
+    
     TEMP_AI_GPU_URL=$(grep "https://browser.geekbench.com" /tmp/gbai_gpu_temp.txt | grep -v "claim" | xargs)
     if [ -n "$TEMP_AI_GPU_URL" ]; then
         GBAI_GPU_URL="\"$TEMP_AI_GPU_URL\""
     fi
     
-    rm -f /tmp/gbai_temp.txt /tmp/gbai_gpu_temp.txt
+    if [ "$DEBUG_MODE" -eq 0 ]; then
+        rm -f /tmp/gbai_temp.txt /tmp/gbai_gpu_temp.txt
+    fi
 fi
 
 echo "Generating JSON Output..."
 
-# Write JSON to file
 cat <<EOF > "$OUTPUT_FILE"
 {
   "hostname": "$HOSTNAME_VAL",

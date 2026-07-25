@@ -1,0 +1,18 @@
+# Geekbench directories and archives
+Geekbench-7*/
+GeekbenchAI-*/
+*.zip
+*.tar.gz
+
+# FIO temporary test file
+fio_test_file
+
+# Raw benchmark output files (only track benchmarks.json)
+benchmark_*.json
+benchmark_summary_*.txt
+
+# Battery test output files
+battery_life_*.csv
+
+# OS generated files
+.DS_Store
